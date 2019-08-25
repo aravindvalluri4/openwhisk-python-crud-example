@@ -1,0 +1,40 @@
+#INSTALL DIND CLUSTER
+
+@This is already done, just in case !
+wget https://cdn.rawgit.com/kubernetes-sigs/kubeadm-dind-cluster/master/fixed/dind-cluster-v1.15.sh
+chmod +x dind-cluster-v1.15.sh
+
+@Start the cluster. Please note you *must* set `USE_HAIRPIN` to `true`
+USE_HAIRPIN=true ./dind-cluster-v1.15.sh up
+
+
+#INSTALL OPENWHISK & POSTGRES
+sh ./install_ow_and_pg_dind.sh
+Incase you get tiller not ready error, just re-execute the script till it succeds.
+
+#INSTALL OPENWHISK SCRIPT STEPS EXPLAINED
+@add the directory containing kubectl to your PATH
+export PATH="$HOME/.kubeadm-dind-cluster:$PATH"
+
+@label nodes
+kubectl label node kube-node-1 openwhisk-role=core
+kubectl label node kube-node-2 openwhisk-role=invoker
+
+@instaling openwhisk
+helm init
+kubectl create clusterrolebinding tiller-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
+helm install ./openwhisk --namespace=openwhisk --name=owdev -f values.yaml 
+
+@wait for everything to be ready
+kubectl get pods -n openwhisk -w
+
+@install postgres
+helm install --name postgres stable/postgresql --set persistence.enabled=false --namespace=postgres
+
+#INSTALL wsk client install
+
+wget https://github.com/apache/openwhisk-cli/releases/download/0.10.0-incubating/OpenWhisk_CLI-0.10.0-incubating-linux-amd64.tgz
+wsk property set --apihost 10.192.0.3:31001
+wsk property set --auth 23bc46b1-71f6-4ed5-8c54-816aa4f8c502:123zO3xZCLrMN6v2BKK1dXYFpXlPkccOFqm12CdAsMgRU4VrNZ9lyGVCGuMDGIwP
+wsk list -i
+

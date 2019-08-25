@@ -1,0 +1,55 @@
+# starting point
+Every action starting point can be found in __main__.py
+
+# understanding args
+openwhisk rest based implementation passes all the arguments to args
+which is a python dictionary
+
+example args input
+==================
+
+{
+   "__ow_path":"",
+   "__ow_body":"LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS03YjI2MjQzOTQwN2EzZDQ2DQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9Im5hbWUiDQoNCmlldGYtaW50ZXJmYWNlcw0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS03YjI2MjQzOTQwN2EzZDQ2DQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9InRpdGxlIg0KDQp5YW5nIHNjaGVtYQ0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS03YjI2MjQzOTQwN2EzZDQ2LS0NCg==",
+   "__ow_headers":{
+      "host":"owdev-controller.openwhisk.svc.cluster.local:8080",
+      "content-type":"multipart/form-data; boundary=------------------------7b262439407a3d46",
+      "accept":"*/*",
+      "user-agent":"curl/7.58.0"
+   },
+   "__ow_method":"post"
+}
+
+explanation
+===========
+    __ow_method : The HTTP method of the request.
+    __ow_headers : The request headers.
+    __ow_user: The namespace identifying the OpenWhisk authenticated subject who created this web action.
+    __ow_path:The attributes which are passed as path parameters into the action.
+    __ow_query:The parameters which are passed into the action as query parameters.
+    __ow_body:The request body entity, as a base64 encoded string when content is binary or JSON object/array, or plain string otherwise.
+
+
+user defined args are db, refer to ow_args_parser code
+
+# psycopg2 (For Postgres connections)
+psycopg2 is built for openwhisk alpine and is statically linked
+
+### Instructions on compiling this package from scratch
+
+Here was the process that was used to build this package. You will need to
+perform these steps if you want to build a newer version of the psycopg2
+library. Perform all these steps in a alpine or openwhisk container
+
+1. Download the
+  [PostgreSQL source code](https://ftp.postgresql.org/pub/source/v9.4.3/postgresql-9.4.3.tar.gz) and extract into a directory.
+2. Download the
+  [psycopg2 source code](http://initd.org/psycopg/tarballs/PSYCOPG-2-6/psycopg2-2.6.1.tar.gz) and extract into a directory.
+3. Go into the PostgreSQL source directory and execute the following commands:
+  - `./configure --prefix {path_to_postgresql_source} --without-readline --without-zlib`
+  - `make`
+  - `make install`
+4. Go into the psycopg2 source directory and edit the `setup.cfg` file with the following:
+  - `pg_config={path_to_postgresql_source/bin/pg_config}`
+  - `static_libpq=1`
+5. Execute `python setup.py build` in the psycopg2 source directory.
