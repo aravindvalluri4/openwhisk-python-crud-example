@@ -7,16 +7,15 @@ OpenWhisk is a cloud-first distributed event-based programming service. It provi
 #### Table of contents
 
 1. [Enviornment Setup](#envsetup)
-2. [Install OpenWhisk And Postgresql](#owinstall)
-3. [Install Schema Actions](#actioninstall)
-4. [REST API](#rest)
-  * [Description](#desc)
-  * [Usage Examples](#exp)
-5. [Tutorial/Example](#tutorial)
-6. [Logging](#logs)
-7. [Testing](#testing)
-8. [GIT](#git)
-9. [RESOURCES](#resources)
+1. [Install OpenWhisk And Postgresql](#owinstall)
+1. [Install Schema Actions](#actioninstall)
+1. [REST API](#rest)
+   * [Description](#desc)
+   * [Usage Examples](#exp)
+1. [Tutorial/Example](#tutorial)
+1. [Logging](#logs)
+1. [Testing](#testing)
+1. [RESOURCES](#resources)
 
 ### <a name="envsetup"></a> Environment Setup
 
